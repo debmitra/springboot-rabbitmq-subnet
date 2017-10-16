@@ -3,6 +3,10 @@ version: '2'
 networks:
   app-tier:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
 
 services:
   rabbitamqp:
@@ -11,7 +15,8 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - app-tier
+      app-tier:
+        ipv4_address: 172.18.0.5
 
 
   bootrabbitmq:
@@ -19,7 +24,10 @@ services:
     ports:
       - "80:9055"
     networks:
-      - app-tier
+      app-tier:
+        ipv4_address: 172.18.0.6
+    depends_on:
+      - rabbitamqp
 #    depends_on:
  #     - "rabbitamqp"
   #  command: ["./wait-for-it.sh", "rabbitamqp:5672", "--", "echo", "rabbitmq is up"]
